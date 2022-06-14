@@ -1,4 +1,4 @@
-name: CI
+name: Release
 on:
   workflow_dispatch:
     inputs:
@@ -36,27 +36,33 @@ jobs:
           
           echo "::set-output name=version::${version}"
           echo "::set-output name=os_arch::$(go env GOOS)-$(go env GOARCH)"
-      - name: Tag
-        id: tag
-        env:
-          version: ${{ steps.meta.outputs.version }}
-        run: |
-          echo "Tagging $version"
-          git config user.name "quorumbot"
-          git tag -a "$version" -m "$version"
-          git push --tags
       - name: Build and package
         env:
           version: ${{ steps.meta.outputs.version }}
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
           make default package VERSION="$version"
-      - name: Create release
-        uses: softprops/action-gh-release@v1
-        env:
-          version: ${{ steps.meta.outputs.version }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
         with:
-          tag_name: $version
-          files: |
+          name: ${{ steps.meta.outputs.os_arch }}-artifacts
+          path: |
             build/dist/*.zip
             build/dist/*.zip.checksum
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: dists
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: dists
+      - name: Tag & release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.meta.outputs.version }}
+          files: dists/*
