@@ -70,7 +70,7 @@ jobs:
         id: glob1
         with:
           files: |
-            **/dists/*.zip
+            **/*
       - name: Show all matching files
         run: |
           echo "${{ steps.glob1.outputs.paths }}"
@@ -79,7 +79,7 @@ jobs:
         id: glob2
         with:
           files: |
-            **/dists/*.zip.checksum
+            **/dists/*
       - name: Show all matching files
         run: |
           echo "${{ steps.glob2.outputs.paths }}"
@@ -88,11 +88,19 @@ jobs:
         id: glob3
         with:
           files: |
-            **/dists/*.zip
-            **/dists/*.zip.checksum
+            **/*.zip
       - name: Show all matching files
         run: |
           echo "${{ steps.glob3.outputs.paths }}"
+      - name: Glob match
+        uses: tj-actions/glob@v9.2
+        id: glob4
+        with:
+          files: |
+            **/*zip
+      - name: Show all matching files
+        run: |
+          echo "${{ steps.glob4.outputs.paths }}"
 #      - name: Tag & release
 #        uses: ncipollo/release-action@v1.10.0
 #        with:
