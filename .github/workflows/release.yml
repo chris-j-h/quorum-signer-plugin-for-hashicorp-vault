@@ -59,10 +59,10 @@ jobs:
         with:
           path: dists
       - name: Display structure of downloaded files
-        run: ls -R
-        working-directory: dists
+        run: ls -R dists
       - name: Tag & release
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1.10.0
         with:
-          tag_name: ${{ steps.meta.outputs.version }}
-          files: dists/*
+          commit: master
+          tag: ${{ steps.meta.outputs.version }}
+          artifacts: "dists/*.zip*"
