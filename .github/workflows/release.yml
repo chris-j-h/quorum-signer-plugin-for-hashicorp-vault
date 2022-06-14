@@ -88,7 +88,8 @@ jobs:
         id: glob3
         with:
           files: |
-            **/dists/*.zip*
+            **/dists/*.zip
+            **/dists/*.zip.checksum
       - name: Show all matching files
         run: |
           echo "${{ steps.glob3.outputs.paths }}"
