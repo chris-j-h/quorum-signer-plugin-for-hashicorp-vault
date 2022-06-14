@@ -64,5 +64,5 @@ jobs:
         uses: ncipollo/release-action@v1.10.0
         with:
           commit: master
-          tag: ${{ steps.meta.outputs.version }}
+          tag: ${{ github.event.inputs.release-version }}
           artifacts: "dists/*.zip*"
