@@ -65,47 +65,10 @@ jobs:
           path: dists
       - name: Display structure of downloaded files
         run: ls -R dists
-      - name: Glob match
-        uses: tj-actions/glob@v9.2
-        id: glob1
+      - name: Tag & release
+        uses: ncipollo/release-action@v1.10.0
         with:
-          files: |
-            **/*.zip
-            **/*.zip.checksum
-      - name: Show all matching files
-        run: |
-          echo "${{ steps.glob1.outputs.paths }}"
-      - name: Glob match
-        uses: tj-actions/glob@v9.2
-        id: glob2
-        with:
-          files: |
-            **/*.zip
-      - name: Show all matching files
-        run: |
-          echo "${{ steps.glob2.outputs.paths }}"
-      - name: Glob match
-        uses: tj-actions/glob@v9.2
-        id: glob3
-        with:
-          files: |
-            **/*.zip.checksum
-      - name: Show all matching files
-        run: |
-          echo "${{ steps.glob3.outputs.paths }}"
-      - name: Glob match
-        uses: tj-actions/glob@v9.2
-        id: glob4
-        with:
-          files: |
-            **/*.checksum
-      - name: Show all matching files
-        run: |
-          echo "${{ steps.glob4.outputs.paths }}"
-#      - name: Tag & release
-#        uses: ncipollo/release-action@v1.10.0
-#        with:
-#          commit: master
-#          tag: ${{ github.event.inputs.release-version }}
-#          artifacts: "**/dists/*.zip*"
-#          body: "Release ${{ github.event.inputs.release-version }}"
+          commit: master
+          tag: ${{ github.event.inputs.release-version }}
+          artifacts: "**/*.zip,**/*.zip.checksum"
+          body: "Release ${{ github.event.inputs.release-version }}"
