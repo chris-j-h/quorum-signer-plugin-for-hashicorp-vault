@@ -65,4 +65,4 @@ jobs:
         with:
           commit: master
           tag: ${{ github.event.inputs.release-version }}
-          artifacts: "dists/*.zip*"
+          artifacts: "*/dists/*.zip*"
