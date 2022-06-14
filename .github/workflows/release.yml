@@ -34,6 +34,11 @@ jobs:
             exit 1
           fi
           
+          if [ $(git tag -l "$version") ]; then
+            echo "tag $version already exists, exiting"
+            exit 1
+          fi
+          
           echo "::set-output name=version::${version}"
           echo "::set-output name=os_arch::$(go env GOOS)-$(go env GOARCH)"
       - name: Build and package
@@ -60,10 +65,37 @@ jobs:
           path: dists
       - name: Display structure of downloaded files
         run: ls -R dists
-      - name: Tag & release
-        uses: ncipollo/release-action@v1.10.0
+      - name: Glob match
+        uses: tj-actions/glob@v9.2
+        id: glob1
         with:
-          commit: master
-          tag: ${{ github.event.inputs.release-version }}
-          artifacts: "**/dists/*.zip*"
-          body: "Release ${{ github.event.inputs.release-version }}"
+          files: |
+            **/dists
+      - name: Show all matching files
+        run: |
+          echo "${{ steps.glob1.outputs.paths }}"
+      - name: Glob match
+        uses: tj-actions/glob@v9.2
+        id: glob2
+        with:
+          files: |
+            **/dists/*
+      - name: Show all matching files
+        run: |
+          echo "${{ steps.glob2.outputs.paths }}"
+      - name: Glob match
+        uses: tj-actions/glob@v9.2
+        id: glob3
+        with:
+          files: |
+            **/dists/*.zip*
+      - name: Show all matching files
+        run: |
+          echo "${{ steps.glob3.outputs.paths }}"
+#      - name: Tag & release
+#        uses: ncipollo/release-action@v1.10.0
+#        with:
+#          commit: master
+#          tag: ${{ github.event.inputs.release-version }}
+#          artifacts: "**/dists/*.zip*"
+#          body: "Release ${{ github.event.inputs.release-version }}"
