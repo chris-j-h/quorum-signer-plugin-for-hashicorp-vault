@@ -70,7 +70,7 @@ jobs:
         id: glob1
         with:
           files: |
-            **/dists
+            **/dists/*.zip
       - name: Show all matching files
         run: |
           echo "${{ steps.glob1.outputs.paths }}"
@@ -79,7 +79,7 @@ jobs:
         id: glob2
         with:
           files: |
-            **/dists/*
+            **/dists/*.zip.checksum
       - name: Show all matching files
         run: |
           echo "${{ steps.glob2.outputs.paths }}"
