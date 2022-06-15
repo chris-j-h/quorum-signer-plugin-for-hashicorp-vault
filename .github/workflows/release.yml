@@ -33,20 +33,22 @@ jobs:
             echo "invalid tag version $version (must be of form vX.X.X), exiting"
             exit 1
           fi
-          
           if [ $(git tag -l "$version") ]; then
             echo "tag $version already exists, exiting"
             exit 1
           fi
-          
           echo "::set-output name=version::${version}"
           echo "::set-output name=os_arch::$(go env GOOS)-$(go env GOARCH)"
-      - name: Build and package
-        env:
-          version: ${{ steps.meta.outputs.version }}
+      - name: Create macos dist
+        if: ${{ matrix.os == 'macos-latest' }}
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
           make default package VERSION="$version"
+      - name: Create portable linux dist
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          export PATH=$PATH:$(go env GOPATH)/bin
+          make default package VERSION="$version" extraldflags='-linkmode external -extldflags "-static"'
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
